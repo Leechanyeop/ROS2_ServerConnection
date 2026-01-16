@@ -11,6 +11,10 @@ app.UseWebSockets();
 // 연결된 모든 클라이언트를 관리하기 위한 스레드 안전한 리스트
 var connectedClients = new ConcurrentDictionary<WebSocket, byte>();
 
+// [추가] SBC로 임의의 Cmd_vel을 보내는 백그라운드 태스크 시작
+var cts = new CancellationTokenSource();
+_ = Server.CmdVelSender.StartSendingAsync(cts.Token);
+
 app.Map("/ws", async context => {
     if (context.WebSockets.IsWebSocketRequest) {
         using var ws = await context.WebSockets.AcceptWebSocketAsync();
@@ -64,5 +68,7 @@ app.Map("/ws", async context => {
         context.Response.StatusCode = StatusCodes.Status400BadRequest;
     }
 });
+
+app.Lifetime.ApplicationStopping.Register(() => cts.Cancel());
 
 app.Run();

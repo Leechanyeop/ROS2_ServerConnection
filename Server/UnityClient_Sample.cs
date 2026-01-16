@@ -5,15 +5,19 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using TMPro; // UI 텍스트 표시를 위해 추가
 
 // [주의] 이 스크립트를 유니티 프로젝트의 Assets 폴더에 넣고, 아무 GameObject에 컴포넌트로 추가하세요.
 public class UnityClient_Sample : MonoBehaviour
 {
     // 윈도우 서버 IP 주소를 입력하세요 (예: "ws://192.168.0.30:5000/ws")
-    [SerializeField] private string serverUri = "ws://Your_IP:5000/ws";
+    [SerializeField] private string serverUri = "ws://192.168.0.49/ws";
     
     // 움직일 대상 오브젝트 (비워두면 이 스크립트가 붙은 오브젝트가 움직임)
     public Transform targetObject;
+
+    // 메세지를 화면에 띄울 TextMeshPro 컴포넌트
+    [SerializeField] private TMP_Text displayMessageText;
 
     private ClientWebSocket _cws;
     private CancellationTokenSource _cts;
@@ -63,6 +67,9 @@ public class UnityClient_Sample : MonoBehaviour
                     // 값 갱신
                     _currentLinear = new Vector3(data.linear.x, data.linear.y, data.linear.z);
                     _currentAngular = new Vector3(data.angular.x, data.angular.y, data.angular.z);
+
+                    // 화면 및 콘솔에 메세지 출력
+                    UpdateStatusUI(message, data);
                 }
             }
             catch (Exception ex)
@@ -87,6 +94,22 @@ public class UnityClient_Sample : MonoBehaviour
             // ROS2 좌표계에서 Z축 회전은 유니티의 Y축 회전(Yaw)에 해당합니다.
             // 방향(부호)은 로봇과 유니티 설정에 따라 반대일 수 있으므로 테스트 필요.
             targetObject.Rotate(Vector3.up * -_currentAngular.z * 180 / Mathf.PI * Time.deltaTime);
+        }
+    }
+
+    private void UpdateStatusUI(string rawJson, TwistData data)
+    {
+        // 콘솔에 디버그 로그 출력
+        Debug.Log($"[ROS2 Received]: {rawJson}");
+
+        // UI TextMeshPro에 정보 표시
+        if (displayMessageText != null)
+        {
+            string status = $"<b>ROS2 Twist Data</b>\n" +
+                            $"Linear X: {data.linear.x:F2}\n" +
+                            $"Angular Z: {data.angular.z:F2}\n" +
+                            $"<size=80%>Raw: {rawJson}</size>";
+            displayMessageText.text = status;
         }
     }
 

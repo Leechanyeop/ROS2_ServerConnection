@@ -24,3 +24,4 @@ C:\#PROJECT\ROS2_ServerConnection\Server\obj\Debug\net10.0\refint\Server.dll
 C:\#PROJECT\ROS2_ServerConnection\Server\obj\Debug\net10.0\Server.pdb
 C:\#PROJECT\ROS2_ServerConnection\Server\obj\Debug\net10.0\Server.genruntimeconfig.cache
 C:\#PROJECT\ROS2_ServerConnection\Server\obj\Debug\net10.0\ref\Server.dll
+C:\#PROJECT\ROS2_ServerConnection\Server\obj\Debug\net10.0\Server.sourcelink.json

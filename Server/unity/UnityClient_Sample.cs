@@ -10,7 +10,7 @@ using UnityEngine;
 public class UnityClient_Sample : MonoBehaviour
 {
     // 윈도우 서버 IP 주소를 입력하세요 (예: "ws://192.168.0.30:5000/ws")
-    [SerializeField] private string serverUri = "ws://192.168.0.30:5000/ws";
+    [SerializeField] private string serverUri = "ws://192.168.0.45:5000/ws";
     
     // 움직일 대상 오브젝트 (비워두면 이 스크립트가 붙은 오브젝트가 움직임)
     public Transform targetObject;

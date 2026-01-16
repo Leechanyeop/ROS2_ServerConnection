@@ -1,0 +1,10 @@
+ROS 명령어 모음
+
+
+🖥️ 키보드로 제어 (teleop_twist_keyboard)
+- 패키지 설치 (Ubuntu 기준):
+sudo apt install ros-${ROS_DISTRO}-teleop-twist-keyboard
+- 👉 ${ROS_DISTRO}는 humble, iron 등 현재 ROS 2 배포판 이름으로 바꿔주세요.
+- 실행 명령:
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+- 

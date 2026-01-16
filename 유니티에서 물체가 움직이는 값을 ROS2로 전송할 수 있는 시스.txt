@@ -1,0 +1,42 @@
+유니티에서 물체가 움직이는 값을 ROS2로 전송할 수 있는 시스템을 구축했습니다.
+
+변경 사항:
+
+새 스크립트 작성: UnityMovementPublisher.cs를 생성했습니다. 유니티 오브젝트의 실시간 위치와 회전 변화량을 계산하여 ROS2 표준 메시지인 Twist(/cmd_vel 규격) 형태로 발행합니다.
+좌표계 변환: 유니티의 Z축(전진) 값을 ROS2의 X축 선속도로 변환하여 전송합니다.
+사용 및 확인 방법:
+
+유니티에서 움직임을 측정하고 싶은 오브젝트(로봇 등)에 UnityMovementPublisher 스크립트를 추가합니다.
+씬을 실행(Play)하고 오브젝트를 움직이면 /unity_move_data 토픽으로 데이터가 발행됩니다.
+ROS2 터미널에서 아래 명령어를 입력하여 데이터가 들어오는지 실시간으로 확인할 수 있습니다:
+
+ROS -> Server -> Unity Structure Guide
+ROSConnectionPrefab을 기반으로 한 전체 통신 구조(ROS -> Server -> Unity)를 구축하는 방법입니다.
+
+1. ROS (Publisher) 설정
+로봇의 움직임 값을 발행하는 ROS2 노드입니다.
+
+파일: 
+c:#PROJECT\ROS2_ServerConnection\Server\cmd_vel_publisher.py
+역할: /cmd_vel 토픽으로 geometry_msgs/Twist 메시지를 발행합니다.
+2. Server (Relay) 설정
+ROS와 유니티 사이의 다리 역할을 하는 ros_tcp_endpoint입니다.
+
+실행: ROS2 워크스페이스에서 ros_tcp_endpoint 패키지를 실행합니다.
+# 예시 (서버 IP: 192.168.0.45, Port: 10000)
+ros2 run ros_tcp_endpoint default_server_endpoint --ros-args -p ROS_IP:=192.168.0.45
+3. Unity (Subscriber) 설정
+서버로부터 데이터를 받아 로봇을 움직이고 화면에 정보를 띄웁니다.
+
+프리팹: ROSConnectionPrefab을 씬에 배치합니다.
+ROS IP Address: 192.168.0.45 (서버 IP) 입력
+ROS Port: 10000 확인
+스크립트: 로봇 본체에 
+ROSCmdVelSubscriber
+ 스크립트를 추가합니다.
+Display Message Text: 화면에 메시지를 띄울 TextMeshPro 객체를 할당합니다.
+Drive Controller: 로봇의 움직임을 제어하는 컨트롤러를 할당합니다.
+구조 요약
+ROS2 Node가 토픽 발행.
+**Server (ros_tcp_endpoint)**가 해당 토픽을 TCP로 중계.
+**Unity (ROSConnection)**가 서버에 접속하여 토픽 구독 및 처리
