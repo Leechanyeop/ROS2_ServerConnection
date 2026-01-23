@@ -1,0 +1,26 @@
+using UnityEngine;
+using Unity.Robotics.ROSTCPConnector;
+using RosMessageTypes.Geometry;
+
+public class CmdVelSubscriber : MonoBehaviour
+{
+    ROSConnection ros;
+    public string topicName = "/cmd_vel";
+    public float linearScale = 1.0f;
+    public float angularScale = 1.0f;
+
+    void Start()
+    {
+        ros = ROSConnection.instance;
+        ros.Subscribe<TwistMsg>(topicName, OnCmdVel);
+    }
+
+    void OnCmdVel(TwistMsg msg)
+    {
+        float v = (float)msg.linear.x * linearScale;
+        float w = (float)msg.angular.z * angularScale;
+        // 간단한 차동구동: 전진/회전 반영
+        transform.Translate(Vector3.forward * v * Time.deltaTime);
+        transform.Rotate(Vector3.up, Mathf.Rad2Deg * w * Time.deltaTime);
+    }
+}

@@ -8,3 +8,14 @@ sudo apt install ros-${ROS_DISTRO}-teleop-twist-keyboard
 - 실행 명령:
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 - 
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0}, angular: {z: 0.0}}"
+- 이 명령은 로봇에 “속도 제어 모드”를 활성화시켜 바퀴가 자유롭게 회전할 수 있게 합니다.
+2. 모터 드라이버별 해제 서비스
+- 특정 로봇(예: TurtleBot3, Husarion ROSbot 등)은 모터 잠금 해제 서비스를 제공합니다.
+- 예:
+ros2 service call /motor_power std_srvs/srv/SetBool "{data: true}"
+
+
+- - → true로 호출하면 모터 전원이 켜지고, 바퀴가 풀립니다.
+→ false로 호출하면 모터 전원이 꺼져서 바퀴가 잠깁니다.
+

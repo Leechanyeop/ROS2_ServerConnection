@@ -1,0 +1,39 @@
+using UnityEngine;
+using Unity.Robotics.ROSTCPConnector;
+using RosMessageTypes.Sensor;
+
+public class SimpleLidarPublisher : MonoBehaviour
+{
+    ROSConnection ros;
+    public string topicName = "/scan";
+    public int rays = 360;
+    public float maxRange = 10f;
+
+    void Start()
+    {
+        ros = ROSConnection.instance;
+        ros.RegisterPublisher<LaserScanMsg>(topicName);
+    }
+
+    void Update()
+    {
+        var msg = new LaserScanMsg();
+        msg.angle_min = 0f;
+        msg.angle_max = Mathf.Deg2Rad * 360f;
+        msg.angle_increment = Mathf.Deg2Rad * (360f / rays);
+        msg.range_min = 0.05f;
+        msg.range_max = maxRange;
+        msg.ranges = new float[rays];
+
+        for (int i = 0; i < rays; i++)
+        {
+            float angle = i * Mathf.Deg2Rad * (360f / rays);
+            Vector3 dir = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle));
+            if (Physics.Raycast(transform.position, dir, out RaycastHit hit, maxRange))
+                msg.ranges[i] = hit.distance;
+            else
+                msg.ranges[i] = maxRange;
+        }
+        ros.Publish(topicName, msg);
+    }
+}
